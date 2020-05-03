@@ -27,7 +27,8 @@ var schema = buildSchema(`
     code: String
     linkUri: String
     name: String
-    questions: [Question]
+    questions: [String]
+    fullQuestions: [Question]
     userAnswersResults: [UserAnswerResult]
   }
   type Question {
@@ -37,7 +38,6 @@ var schema = buildSchema(`
   }
   type Answer {
     _id: String
-    question: Question
     text: String
   }
   type UserAnswerResult {
@@ -50,10 +50,15 @@ var schema = buildSchema(`
     answer: Answer
     question: Question
   }
+  input AnswerInput {
+    text: String
+  }
 
   type Mutation {
     createQuestion(text: String): Question
     createQuestionnaire(name: String): Questionnaire
+    addQuestion(question: String, questionnaire: String): Questionnaire
+    addAnswer(answer: AnswerInput, question: String): Question
   }
 `)
 
@@ -85,15 +90,44 @@ const start = async () => {
       return await Questionnaires.findOne(mongo.ObjectId(_id))
     },
     questionnaireByCode: async ({ code }) => {
-      return await Questionnaires.findOne({code: code})
+      return await Questionnaires.aggregate([
+        {
+          $match: {code: code}
+        },
+        {
+          $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+        }
+      ]).next()
     },
     questionnaireByLinkUri: async ({ uri }) => {
       return await Questionnaires.findOne({linkUri: uri})
     },
     createQuestionnaire: async ({name}) => {
-      var questionnaire = {name: name, code: "1234"}
+      var questionnaire = {name: name, code: "1234", questions: []}
       await Questionnaires.insertOne(questionnaire)
       return questionnaire
+    },
+    addQuestion: async ({question, questionnaire}) => {
+      await Questionnaires.updateOne(
+        {
+          _id: mongo.ObjectId(questionnaire)
+        },
+        {
+          $push: { questions: mongo.ObjectId(question) }
+        }
+      )
+      return await Questionnaires.findOne(mongo.ObjectId(questionnaire))
+    },
+    addAnswer: async ({answer, question}) => {
+      await Questions.updateOne(
+        {
+          _id: mongo.ObjectId(question)
+        },
+        {
+          $push: { answers: {...answer, _id: new mongo.ObjectID()} }
+        }
+      )
+      return await Questions.findOne(mongo.ObjectId(question))
     }
   }
 
