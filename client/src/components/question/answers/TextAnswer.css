@@ -1,0 +1,14 @@
+.answer-selection-box {
+  min-width: 12px;
+  width: 12px;
+  height: 12px;
+  display: block;
+  border: 2px solid #689baf;
+  border-radius: 100%;
+  margin-right: 10px;
+  transition: border-color .2s, background-color .2s;
+}
+.answer-selected .answer-selection-box {
+  border-color: #4e76c7;
+  background-color: #c2cefb;
+}

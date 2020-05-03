@@ -1,0 +1,27 @@
+.question-container {
+  background-color: #f9f9f9;
+  max-width: 400px;
+  margin: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.question-title {
+  margin: 10px;
+  margin-bottom: 60px;
+}
+.question-next {
+  all: unset;
+  background-color: #ececec;
+  color: #a5a5a5;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  margin-top: 32px;
+  font-size: 22px;
+  box-sizing: border-box;
+}
+.question-next-active {
+  background-color: #128af1;
+  color: #ffffff;
+}
