@@ -9,6 +9,13 @@
 .question-title {
   margin: 10px;
   margin-bottom: 60px;
+  display: flex;
+  justify-content: space-between;
+}
+.question-sequence-info {
+  font-size: 12px;
+  color: #969696;
+  font-weight: normal;
 }
 .question-next {
   all: unset;
@@ -18,10 +25,13 @@
   padding: 10px;
   text-align: center;
   margin-top: 32px;
-  font-size: 22px;
+  /* font-size: 22px; */
+  border-radius: 6px;
   box-sizing: border-box;
+  cursor: pointer;
 }
 .question-next-active {
   background-color: #128af1;
+/* background: linear-gradient(78deg, #3b4fc3, #ac45e0); */
   color: #ffffff;
 }

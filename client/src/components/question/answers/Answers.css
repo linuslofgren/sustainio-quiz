@@ -17,13 +17,15 @@
   width: 100%;
   display: flex;
   align-items: center;
-  /* border-radius: 0px; */
+  border-radius: 10px;
   /* justify-content: center; */
-  box-shadow: 0px 0px 6px #00000021;
+  box-shadow: 0px 0px 3px #00000012;
   transition: background-color .2s, box-shadow .2s;
+  border: 1px solid #dadada;
 }
 .answer-selected {
-  background-color: #eef3fb;
+  /* background-color: #eef3fb; */
+    border-color: #5aa0e2;
 }
 .answer-selected.answer {
   box-shadow: 0px 0px 2px #00000021;

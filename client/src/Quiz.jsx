@@ -31,7 +31,7 @@ const Quiz = ({code}) => {
   return (
     <div className="App">
       <h1>{((res.data || {}).questionnaireByCode || {}).name}</h1>
-      {questions.map(q => <Question key={q._id} text={q.text} answers={q.answers}></Question>)}
+      {questions.map((q, i) => <Question key={q._id} index={i+1} total={questions.length} text={q.text} answers={q.answers}></Question>)}
     </div>
   );
 }

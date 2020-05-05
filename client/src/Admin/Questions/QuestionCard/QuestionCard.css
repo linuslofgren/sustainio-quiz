@@ -1,0 +1,12 @@
+.questioncard-container {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #dadada;
+  border-radius: 6px;
+  background-color: white;
+}
+.questioncard-text {
+  margin: 10px;
+  display: inline-block;
+  max-width: 240px;
+}
