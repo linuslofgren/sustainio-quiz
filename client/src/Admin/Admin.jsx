@@ -3,8 +3,8 @@ import {NavLink as Link, Switch, Route} from 'react-router-dom'
 import '../App.css';
 import './Admin.css'
 
-import Questionnaires from './Questionnaires/Questionnaires'
-import Questions from './Questions/Questions'
+import QuestionnairesProvider from './Questionnaires/QuestionnairesProvider'
+import QuestionsProvider from './Questions/QuestionsProvider'
 
 const Admin = () => {
   return <div className="admin-container">
@@ -17,14 +17,18 @@ const Admin = () => {
       </ul>
     </div>
     <div className="admin-content">
-      <Switch>
-        <Route path="/admin/questions">
-          <Questions />
-        </Route>
-        <Route path="/admin/questionnaires">
-          <Questionnaires />
-        </Route>
-      </Switch>
+      <div className="admin-questions-container">
+        <input placeholder="Seach for questions, answers or questionnaires" className="admin-questions-search-input"/>
+
+        <Switch>
+          <Route path="/admin/questions">
+            <QuestionsProvider />
+          </Route>
+          <Route path="/admin/questionnaires">
+            <QuestionnairesProvider />
+          </Route>
+        </Switch>
+      </div>
     </div>
 
   </div>

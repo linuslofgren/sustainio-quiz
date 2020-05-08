@@ -53,12 +53,18 @@ var schema = buildSchema(`
   input AnswerInput {
     text: String
   }
+  input UserAnswerInput {
+    answer: String
+    question: String
+  }
 
   type Mutation {
     createQuestion(text: String): Question
     createQuestionnaire(name: String): Questionnaire
     addQuestion(question: String, questionnaire: String): Questionnaire
     addAnswer(answer: AnswerInput, question: String): Question
+    addUserAnswerResult(questionnaire: String): UserAnswerResult
+    addUserAnswer(userAnswerResult: String, userAnswer: UserAnswerInput): UserAnswerResult
   }
 `)
 
@@ -103,7 +109,7 @@ const start = async () => {
       return await Questionnaires.findOne({linkUri: uri})
     },
     createQuestionnaire: async ({name}) => {
-      var questionnaire = {name: name, code: "1234", questions: []}
+      var questionnaire = {name: name, code: "1234", questions: [], responses: []}
       await Questionnaires.insertOne(questionnaire)
       return questionnaire
     },
@@ -128,6 +134,29 @@ const start = async () => {
         }
       )
       return await Questions.findOne(mongo.ObjectId(question))
+    },
+    addUserAnswerResult: async ({questionnaire}) => {
+      const id = new mongo.ObjectID()
+      const response = {time: new Date().toISOString(), _id: id, answers: []}
+      await Questionnaires.updateOne(
+        {
+          _id: mongo.ObjectId(questionnaire)
+        },
+        {
+          $push: { responses: response }
+        }
+      )
+      return response
+    },
+    addUserAnswer: async ({userAnswerResult, userAnswer}) => {
+      await Questionnaires.updateOne(
+        { "responses._id": mongo.ObjectId(userAnswerResult) },
+        {
+          $push: { "responses.$.answers": {...userAnswer} }
+        }
+      )
+      const res = (await Questionnaires.findOne( { "responses._id": mongo.ObjectId(userAnswerResult) }, {"responses.$.answers": 1} ))
+      return res.responses[0]
     }
   }
 
