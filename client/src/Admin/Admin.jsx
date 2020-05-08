@@ -24,9 +24,7 @@ const Admin = () => {
           <Route path="/admin/questions">
             <QuestionsProvider />
           </Route>
-          <Route path="/admin/questionnaires">
-            <QuestionnairesProvider />
-          </Route>
+          <Route path="/admin/questionnaires" component={QuestionnairesProvider} />
         </Switch>
       </div>
     </div>

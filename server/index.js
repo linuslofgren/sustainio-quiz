@@ -29,7 +29,7 @@ var schema = buildSchema(`
     name: String
     questions: [String]
     fullQuestions: [Question]
-    userAnswersResults: [UserAnswerResult]
+    responses: [UserAnswerResult]
   }
   type Question {
     _id: String
@@ -90,10 +90,21 @@ const start = async () => {
       return question
     },
     questionnaires: async () => {
-      return await Questionnaires.find({}).toArray()
+      return await Questionnaires.aggregate([
+        {
+          $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+        }
+      ]).toArray()
     },
     questionnaire: async ({ _id }) => {
-      return await Questionnaires.findOne(mongo.ObjectId(_id))
+      return await Questionnaires.aggregate([
+        {
+          $match: {_id: mongo.ObjectId(_id)}
+        },
+        {
+          $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+        }
+      ]).next()
     },
     questionnaireByCode: async ({ code }) => {
       return await Questionnaires.aggregate([

@@ -1,28 +1,18 @@
 import React from 'react';
-import { useQuery } from 'urql'
-import Questionnaires from './Questionnaires'
+import { Switch, Route } from 'react-router-dom'
+import QuestionnairesList from './QuestionnairesList'
+import QuestionnaireDetails from './QuestionnaireDetails/QuestionnaireDetails'
 
-const QuestionnairesProvider = ({code}) => {
-  const [res, executeQuery] = useQuery({
-    query: `
-      query {
-        questionnaires {
-          _id
-          name
-          questions
-          expiryDate
-          code
-          linkUri
-        }
-      }
-    `
-  })
-  let questionnaires = []
-  if(res.data) {
-    questionnaires = res.data.questionnaires
-  }
+const QuestionnairesProvider = ({match}) => {
   return (
-    <Questionnaires questionnaires={questionnaires}/>
+    <Switch>
+      <Route path={match.url + '/:questionnaireId'}>
+        <QuestionnaireDetails />
+      </Route>
+      <Route>
+        <QuestionnairesList />
+      </Route>
+    </Switch>
   );
 }
 
