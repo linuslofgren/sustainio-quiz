@@ -20,5 +20,15 @@ a {
 }
 .App-input-code {
   padding: 10px;
-  font-size: 38px;
+  font-size: 28px;
+}
+.App-start-button {
+  all: unset;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: black;
+  color: white;
+  padding: 20px;
+  padding-bottom: 4px;
+  padding-top: 4px;
 }

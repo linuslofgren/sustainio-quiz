@@ -18,7 +18,7 @@ function App() {
            (
             <div className="App">
               <input type="number" value={code} onChange={e => setCode(e.target.value)} className="App-input-code" placeholder="CODE" />
-              <button onClick={()=>setStart(false)}>GO</button>
+              <button className="App-start-button" onClick={()=>setStart(false)}>Start</button>
             </div>
           )
           :
