@@ -12,7 +12,7 @@ const Questions = ({questions, addQuestion}) => {
       </h1>
       <div className="admin-questioncards-container">
         {questions.map(q =>
-          <Link to={'questions/'+q._id}><QuestionCard key={q._id} text={q.text}/></Link>
+          <Link to={'questions/'+q._id} key={q._id}><QuestionCard text={q.text}/></Link>
         )}
       </div>
     </div>

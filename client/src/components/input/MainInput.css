@@ -1,0 +1,20 @@
+.Component-MainInput-container {
+  display: flex;
+}
+.Component-MainInput-input {
+  font-size: 18px;
+  background-color: #00000011;
+  border: none;
+  padding: 4px;
+  padding-left: 10px;
+}
+.Component-MainInput-button {
+  all: unset;
+  margin-left: 10px;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 6px;
+}

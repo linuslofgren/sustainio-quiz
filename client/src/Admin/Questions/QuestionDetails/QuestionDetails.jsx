@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useQuery, useMutation } from 'urql'
 import { useParams } from 'react-router-dom'
 import Question from '../../../components/question/Question'
+import MainInput from '../../../components/input/MainInput'
+import EditableItem from '../../../components/input/EditableItem'
 
 const QuestionDetails = ({}) => {
   let {questionId} = useParams()
@@ -27,6 +29,28 @@ const QuestionDetails = ({}) => {
         }
       }
     `)
+  const [changeTextResult, changeText] = useMutation(`
+      mutation ($question: String, $text: String) {
+      	Question(_id: $question) {
+          text(input: $text) {
+            _id
+          }
+        }
+      }
+    `)
+
+  const [changeAnswerTextResult, changeAnswerText] = useMutation(`
+    mutation ($question: String, $answer: String, $text: String) {
+    	Question(_id: $question) {
+        Answer(answer: $answer) {
+          text(input: $text) {
+            _id
+          }
+        }
+      }
+    }
+  `)
+  let [showChangeText, setShowChangeText] = useState(false)
   let question = {
     text: "---"
   }
@@ -34,13 +58,27 @@ const QuestionDetails = ({}) => {
     question = res.data.question
   }
   return <div className="admin-questions-items-container">
-      <h1 className="admin-questioncards-title">{question.text}</h1>
+      {
+        showChangeText ?
+          <MainInput defaultValue={question.text} save={(newVal)=>{
+              changeText({question: questionId, text:newVal})
+              .then(()=>setShowChangeText(false))
+            }}/>
+        :
+          <h1 className="admin-questioncards-title" onClick={()=>setShowChangeText(true)}>{question.text}</h1>
+      }
+
       <p>ID: {questionId}</p>
       <h2>Answers</h2>
       <span onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
       <ol>
         {(question.answers || []).map(q => <li key={q._id}>
-          <p>{q.text}</p>
+          <EditableItem defaultValue={q.text} save={(newVal)=>{
+              changeAnswerText({question: questionId, answer: q._id, text: newVal})
+              .then(console.log)
+            }}>
+            <p>{q.text}</p>
+          </EditableItem>
         </li>)}
       </ol>
       <h2>Preview</h2>

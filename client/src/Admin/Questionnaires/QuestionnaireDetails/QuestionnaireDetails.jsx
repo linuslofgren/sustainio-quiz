@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation } from 'urql'
 import { useParams, Link } from 'react-router-dom'
 import QuestionSelection from './QuestionSelection'
+import MainInput from '../../../components/input/MainInput'
 
 const QuestionnaireDetails = ({}) => {
   let {questionnaireId} = useParams()
@@ -12,6 +13,7 @@ const QuestionnaireDetails = ({}) => {
           _id
           name
           code
+          expiryDate
           fullQuestions {
             _id
             text
@@ -36,15 +38,41 @@ const QuestionnaireDetails = ({}) => {
         }
       }
     `)
+  const [changeNameResult, changeName] = useMutation(`
+      mutation ($questionnaire: String, $name: String) {
+        Questionnaire(_id: $questionnaire) {
+          name(input: $name) {
+            _id
+          }
+        }
+      }
+    `)
   let [showAddQuestion, setShowQuestion] = useState(false)
+  let [showChangeName, setShowChangeName] = useState(false)
   let questionnaire = {}
   if (res.data && res.data.questionnaire) {
     questionnaire = res.data.questionnaire
   }
+  // {/*<div><input/><button onClick={()=>changeName({questionnaire: questionnaireId, name: "New auto name"})}>Save</button></div>*/}
   return <div className="admin-questions-items-container">
-      <h1 className="admin-questioncards-title">{questionnaire.name}</h1>
+      {
+        showChangeName ?
+          <MainInput defaultValue={questionnaire.name} save={(newName)=>{
+              changeName({questionnaire: questionnaireId, name: newName})
+              .then(()=>setShowChangeName(false))
+            }}></MainInput>
+        :
+          <h1 className="admin-questioncards-title" onClick={()=>setShowChangeName(true)}>{questionnaire.name}</h1>
+      }
       <p>ID: {questionnaireId}</p>
       <p>Code: {questionnaire.code}</p>
+      {
+        questionnaire.expiryDate ?
+          <p>Expires: {questionnaire.expiryDate}</p>
+        :
+          <p>Never Expires</p>
+      }
+
       <p>Responses: {(questionnaire.responses || []).length}</p>
       <h2>Questions</h2>
       <span onClick={()=>setShowQuestion(s => !s)}>Add Question</span>

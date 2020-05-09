@@ -59,6 +59,21 @@ var schema = buildSchema(`
     question: String
   }
 
+  type QuestionnaireOps {
+    expireDate(input: String): Questionnaire
+    code(input: String): Questionnaire
+    name(input: String): Questionnaire
+  }
+
+  type QuestionOps {
+    text(input: String): Question
+    Answer(answer: String): AnswerOps
+  }
+
+  type AnswerOps {
+    text(input: String): Answer
+  }
+
   type Mutation {
     createQuestion(text: String): Question
     createQuestionnaire(name: String): Questionnaire
@@ -66,6 +81,8 @@ var schema = buildSchema(`
     addAnswer(answer: AnswerInput, question: String): Question
     addUserAnswerResult(questionnaire: String): UserAnswerResult
     addUserAnswer(userAnswerResult: String, userAnswer: UserAnswerInput): UserAnswerResult
+    Question(_id: String): QuestionOps
+    Questionnaire(_id: String): QuestionnaireOps
   }
 `)
 
@@ -173,7 +190,34 @@ const start = async () => {
       )
       const res = (await Questionnaires.findOne( { "responses._id": mongo.ObjectId(userAnswerResult) }, {"responses.$.answers": 1} ))
       return res.responses[0]
-    }
+    },
+    Question: async ({_id}) => ({
+      text: async ({input}) => {
+        await Questions.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"text": input}})
+        return await Questions.findOne({_id: mongo.ObjectId(_id)})
+      },
+      Answer: async ({answer}) => ({
+        text: async ({input}) => {
+          Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.text": input}})
+          return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
+        }
+      })
+    }),
+    Questionnaire: async ({_id}) => ({
+      expiryDate: ()=>{},
+      code: ()=>{},
+      name: async ({input})=> {
+        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"name": input}})
+        return await Questionnaires.aggregate([
+          {
+            $match: {_id: mongo.ObjectId(_id)}
+          },
+          {
+            $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+          }
+        ]).next()
+      }
+    })
   }
 
   var app = express()
