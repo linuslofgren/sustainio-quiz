@@ -16,6 +16,7 @@ var db = {questionnaires: [
 var schema = buildSchema(`
   type Query {
     questions: [Question]
+    question(_id: String): Question
     questionnaires: [Questionnaire]
     questionnaire(_id: String): Questionnaire
     questionnaireByCode(code: String): Questionnaire
@@ -47,8 +48,8 @@ var schema = buildSchema(`
   }
   type UserAnswer {
     _id: String
-    answer: Answer
-    question: Question
+    answer: String
+    question: String
   }
   input AnswerInput {
     text: String
@@ -68,7 +69,8 @@ var schema = buildSchema(`
   }
 `)
 
-
+// Answer count:
+// db.questionnaires.aggregate({$unwind: "$responses"}, {$unwind: "$responses.answers"}, {$group: {_id: "$responses.answers.answer", count: {$sum: 1}}}).pretty()
 
 const start = async () => {
 
@@ -83,6 +85,9 @@ const start = async () => {
   var root = {
     questions: async () => {
       return await Questions.find({}).toArray()
+    },
+    question: async ({ _id }) => {
+      return await Questions.findOne({_id: mongo.ObjectId(_id)})
     },
     createQuestion: async ({text}) => {
       var question = {text: text}

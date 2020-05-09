@@ -1,32 +1,19 @@
 import React from 'react';
-import { useQuery, useMutation } from 'urql'
-import Questions from './Questions'
+import { Switch, Route } from 'react-router-dom'
+import QuestionsList from './QuestionsList'
+import QuestionDetails from './QuestionDetails/QuestionDetails'
 
-const QuestionsProvider = ({code}) => {
-  const [res, executeQuery] = useQuery({
-    query: `
-      query {
-        questions {
-          _id
-          text
-        }
-      }
-    `
-  })
-  const [addQuestionResult, addQuestion] = useMutation(`
-      mutation ($text: String) {
-        createQuestion (text: $text) {
-          _id
-        }
-      }
-    `)
-  let questions = []
-  if(res.data) {
-    questions = res.data.questions
-  }
+const QuestionProvider = ({match}) => {
   return (
-    <Questions questions={questions} addQuestion={()=>{addQuestion({text: "Auto q"})}}/>
+    <Switch>
+      <Route path={match.url + '/:questionId'}>
+        <QuestionDetails />
+      </Route>
+      <Route>
+        <QuestionsList />
+      </Route>
+    </Switch>
   );
 }
 
-export default QuestionsProvider;
+export default QuestionProvider;

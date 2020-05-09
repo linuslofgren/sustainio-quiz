@@ -21,9 +21,7 @@ const Admin = () => {
         <input placeholder="Seach for questions, answers or questionnaires" className="admin-questions-search-input"/>
 
         <Switch>
-          <Route path="/admin/questions">
-            <QuestionsProvider />
-          </Route>
+          <Route path="/admin/questions" component={QuestionsProvider} />
           <Route path="/admin/questionnaires" component={QuestionnairesProvider} />
         </Switch>
       </div>
