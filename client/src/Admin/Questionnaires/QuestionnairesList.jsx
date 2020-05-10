@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery } from 'urql'
+import { useQuery, useMutation } from 'urql'
 import Questionnaires from './Questionnaires'
 
 const QuestionnairesList = () => {
@@ -20,12 +20,19 @@ const QuestionnairesList = () => {
       }
     `
   })
+  const [addQuestionnaireResult, addQuestionnaire] = useMutation(`
+      mutation ($name: String) {
+        createQuestionnaire (name: $name) {
+          _id
+        }
+      }
+    `)
   let questionnaires = []
   if(res.data) {
     questionnaires = res.data.questionnaires
   }
   return (
-    <Questionnaires questionnaires={questionnaires}/>
+    <Questionnaires questionnaires={questionnaires} addQuestionnaire={()=>{addQuestionnaire({name: "New questionnaire"})}}/>
   );
 }
 
