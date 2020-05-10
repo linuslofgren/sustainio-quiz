@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import logo from './logo.svg';
 import './App.css';
 import Admin from './Admin/Admin'
-import Quiz from './Quiz'
+import Quiz from './Quiz/Quiz'
 
 function App() {
   let [code, setCode] = useState('')
