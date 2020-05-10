@@ -59,44 +59,6 @@ const QuestionnaireDetails = ({}) => {
     questionnaire = res.data.questionnaire
   }
   // {/*<div><input/><button onClick={()=>changeName({questionnaire: questionnaireId, name: "New auto name"})}>Save</button></div>*/}
-<<<<<<< HEAD
-  return <div className="admin-questions-items-container">
-      {
-        showChangeName ?
-          <MainInput defaultValue={questionnaire.name} save={(newName)=>{
-              changeName({questionnaire: questionnaireId, name: newName})
-              .then(()=>setShowChangeName(false))
-            }}></MainInput>
-        :
-          <h1 className="admin-questioncards-title" onClick={()=>setShowChangeName(true)}>{questionnaire.name}</h1>
-      }
-      <p>ID: {questionnaireId}</p>
-      <p>Code: {questionnaire.code}</p>
-      {
-        questionnaire.expiryDate ?
-          <p>Expires: {questionnaire.expiryDate}</p>
-        :
-          <p>Never Expires</p>
-      }
-
-      <p>Responses: {(questionnaire.responses || []).length}</p>
-      <h2>Questions</h2>
-      <span onClick={()=>setShowQuestion(s => !s)}>Add Question</span>
-      {showAddQuestion ? <QuestionSelection addQuestion={(questionId)=>addQuestion({question: questionId, questionnaire:  questionnaireId})}/> : null}
-      <ol>
-        {(questionnaire.fullQuestions || []).map(q => <li key={q._id}>
-          <Link to={'/admin/questions/' + q._id}>
-            <p>{q.text}</p>
-            <ul>
-              {(q.answers || []).map(a =>
-                <li key={a._id}>{a.text}</li>
-              )}
-            </ul>
-          </Link>
-        </li>)}
-      </ol>
-  </div>
-=======
   return <Switch>
     <Route path="/admin/questionnaires/:questionnaireId/responses">
       <Responses questionnaire={questionnaire}/>
@@ -141,7 +103,6 @@ const QuestionnaireDetails = ({}) => {
     </Route>
   </Switch>
 
->>>>>>> Submit answer
 }
 
 export default QuestionnaireDetails;
