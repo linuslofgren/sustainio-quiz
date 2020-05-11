@@ -35,11 +35,13 @@ var schema = buildSchema(`
   type Question {
     _id: String
     text: String
+    tags: [String]
     answers: [Answer]
   }
   type Answer {
     _id: String
     text: String
+    correct: Boolean
   }
   type UserAnswerResult {
     _id: String
@@ -72,6 +74,7 @@ var schema = buildSchema(`
 
   type AnswerOps {
     text(input: String): Answer
+    correct(correct: Boolean): Answer
   }
 
   type Mutation {
@@ -199,6 +202,10 @@ const start = async () => {
       Answer: async ({answer}) => ({
         text: async ({input}) => {
           Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.text": input}})
+          return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
+        },
+        correct: async ({correct}) => {
+          Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.correct": correct}})
           return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
         }
       })

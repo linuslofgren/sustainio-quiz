@@ -12,7 +12,7 @@ const Question = ({text, answers, index, total, progress}) => {
       <span>{text}</span>
       {index && total ? <span className="question-sequence-info">{index}/{total}</span> : null}
     </h1>
-    <Answers answers={answers} selection={sel} setSelection={setSel}/>
+    <Answers answers={(answers || [])} selection={sel} setSelection={setSel}/>
     <button className={"question-next " + (canProgress ? 'question-next-active': '')} onClick={()=>{
         if(canProgress) {
           progress(answers[sel])

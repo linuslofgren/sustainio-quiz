@@ -27,7 +27,7 @@ const Quiz = ({questionnaire}) => {
   let questions = questionnaire.fullQuestions || []
   return (
     <div className="App">
-      <h1>{questionnaire.name} - {answerId}</h1>
+      <h1>{questionnaire.name}</h1>
       {questions.map((q, i) => {
         if(i === qIdx) {
           return <Question key={q._id} index={i+1} total={questions.length} text={q.text} answers={q.answers} progress={(answer)=>{

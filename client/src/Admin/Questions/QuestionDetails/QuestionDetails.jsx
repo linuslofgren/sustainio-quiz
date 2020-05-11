@@ -73,11 +73,12 @@ const QuestionDetails = ({}) => {
       <span onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
       <ol>
         {(question.answers || []).map(q => <li key={q._id}>
+          <input type="checkbox"/>
           <EditableItem defaultValue={q.text} save={(newVal)=>{
               changeAnswerText({question: questionId, answer: q._id, text: newVal})
               .then(console.log)
             }}>
-            <p>{q.text}</p>
+            <span>{q.text}</span>
           </EditableItem>
         </li>)}
       </ol>

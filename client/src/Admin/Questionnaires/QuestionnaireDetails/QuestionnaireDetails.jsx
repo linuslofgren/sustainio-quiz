@@ -15,6 +15,7 @@ const QuestionnaireDetails = ({}) => {
           name
           code
           expiryDate
+          questions
           fullQuestions {
             _id
             text
@@ -85,8 +86,6 @@ const QuestionnaireDetails = ({}) => {
 
           <Link to={`/admin/questionnaires/${questionnaireId}/responses`}><p>Responses: {(questionnaire.responses || []).length}</p></Link>
           <h2>Questions</h2>
-          <span onClick={()=>setShowQuestion(s => !s)}>Add Question</span>
-          {showAddQuestion ? <QuestionSelection addQuestion={(questionId)=>addQuestion({question: questionId, questionnaire:  questionnaireId})}/> : null}
           <ol>
             {(questionnaire.fullQuestions || []).map(q => <li key={q._id}>
               <Link to={'/admin/questions/' + q._id}>
@@ -99,6 +98,8 @@ const QuestionnaireDetails = ({}) => {
               </Link>
             </li>)}
           </ol>
+          {showAddQuestion ? null : <span onClick={()=>setShowQuestion(s => !s)}>Add Question</span>}
+          {showAddQuestion ? <QuestionSelection hide={()=>setShowQuestion(false)} addedQuestions={(questionnaire.questions || [])} addQuestion={(questionId)=>addQuestion({question: questionId, questionnaire:  questionnaireId})}/> : null}
       </div>
     </Route>
   </Switch>

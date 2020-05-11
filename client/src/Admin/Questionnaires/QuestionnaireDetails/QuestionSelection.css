@@ -1,0 +1,51 @@
+.QuestionSelection-container {
+  background-color: white;
+  border: 1px solid #dadada;
+  border-radius: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-shadow: 0px 2px 5px #0000000a;
+  padding-bottom: 20px;
+}
+.QuestionSelection-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.QuestionSelection-close {
+  font-size: 12px;
+  color: #6b6b6b;
+  font-weight: normal;
+}
+.QuestionSelection-list {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+.QuestionSelection-item {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid #dadada;
+}
+.QuestionSelection-item:last-child {
+  border-bottom: none;
+}
+.QuestionSelection-text-added {
+  color: #6b6b6b;
+  font-size: 12px;
+}
+.QuestionSelection-button-add {
+  all: unset;
+  background-color: #4994f1;
+  padding: 2px;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+  box-shadow: 0 1px 3px #07257754;
+  border-radius: 6px;
+  cursor: pointer;
+}
