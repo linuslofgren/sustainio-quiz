@@ -3,91 +3,11 @@ var express = require('express')
 var cors = require('cors')
 var graphqlHTTP = require('express-graphql')
 var { buildSchema } = require('graphql')
+var fs = require('fs')
 
-var db = {questionnaires: [
-  {
-    _id: "ididididid",
-    expiryDate: "Now",
-    code: "5689",
-    linkUri: "aska%2wr/6q3"
-  }
-]}
+var schemaStr = fs.readFileSync('schema.graphql', 'utf8')
 
-var schema = buildSchema(`
-  type Query {
-    questions: [Question]
-    question(_id: String): Question
-    questionnaires: [Questionnaire]
-    questionnaire(_id: String): Questionnaire
-    questionnaireByCode(code: String): Questionnaire
-    questionnaireByLinkUri(uri: String): Questionnaire
-  }
-  type Questionnaire {
-    _id: String
-    expiryDate: String
-    code: String
-    linkUri: String
-    name: String
-    questions: [String]
-    fullQuestions: [Question]
-    responses: [UserAnswerResult]
-  }
-  type Question {
-    _id: String
-    text: String
-    tags: [String]
-    answers: [Answer]
-  }
-  type Answer {
-    _id: String
-    text: String
-    correct: Boolean
-  }
-  type UserAnswerResult {
-    _id: String
-    time: String
-    answers: [UserAnswer]
-  }
-  type UserAnswer {
-    _id: String
-    answer: String
-    question: String
-  }
-  input AnswerInput {
-    text: String
-  }
-  input UserAnswerInput {
-    answer: String
-    question: String
-  }
-
-  type QuestionnaireOps {
-    expireDate(input: String): Questionnaire
-    code(input: String): Questionnaire
-    name(input: String): Questionnaire
-  }
-
-  type QuestionOps {
-    text(input: String): Question
-    Answer(answer: String): AnswerOps
-  }
-
-  type AnswerOps {
-    text(input: String): Answer
-    correct(correct: Boolean): Answer
-  }
-
-  type Mutation {
-    createQuestion(text: String): Question
-    createQuestionnaire(name: String): Questionnaire
-    addQuestion(question: String, questionnaire: String): Questionnaire
-    addAnswer(answer: AnswerInput, question: String): Question
-    addUserAnswerResult(questionnaire: String): UserAnswerResult
-    addUserAnswer(userAnswerResult: String, userAnswer: UserAnswerInput): UserAnswerResult
-    Question(_id: String): QuestionOps
-    Questionnaire(_id: String): QuestionnaireOps
-  }
-`)
+var schema = buildSchema(schemaStr)
 
 // Answer count:
 // db.questionnaires.aggregate({$unwind: "$responses"}, {$unwind: "$responses.answers"}, {$group: {_id: "$responses.answers.answer", count: {$sum: 1}}}).pretty()
@@ -191,7 +111,25 @@ const start = async () => {
           $push: { "responses.$.answers": {...userAnswer} }
         }
       )
-      const res = (await Questionnaires.findOne( { "responses._id": mongo.ObjectId(userAnswerResult) }, {"responses.$.answers": 1} ))
+      const res = (await Questionnaires.findOne(
+        {
+          "responses._id": mongo.ObjectId(userAnswerResult)
+        },
+        {
+          projection: {"responses.$.answers": true}
+        }
+      ))
+      return res.responses[0]
+    },
+    userAnswerResult: async ({userAnswerResult}) => {
+      const res = (await Questionnaires.findOne(
+        {
+          "responses._id": mongo.ObjectId(userAnswerResult)
+        },
+        {
+          projection: {"responses.$.answers": true}
+        }
+      ))
       return res.responses[0]
     },
     Question: async ({_id}) => ({
@@ -212,9 +150,26 @@ const start = async () => {
     }),
     Questionnaire: async ({_id}) => ({
       expiryDate: ()=>{},
-      code: ()=>{},
+      code: async ()=>{
+
+        let code = Math.floor(Math.random()*10000) + ""
+
+        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"code": code}})
+        return code
+      },
       name: async ({input})=> {
         await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"name": input}})
+        return await Questionnaires.aggregate([
+          {
+            $match: {_id: mongo.ObjectId(_id)}
+          },
+          {
+            $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+          }
+        ]).next()
+      },
+      finishFeedback: async ({show})=> {
+        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"finishFeedback": show}})
         return await Questionnaires.aggregate([
           {
             $match: {_id: mongo.ObjectId(_id)}

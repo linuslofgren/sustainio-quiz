@@ -1,0 +1,76 @@
+type Query {
+  questions: [Question]
+  question(_id: String): Question
+  questionnaires: [Questionnaire]
+  questionnaire(_id: String): Questionnaire
+  questionnaireByCode(code: String): Questionnaire
+  questionnaireByLinkUri(uri: String): Questionnaire
+  userAnswerResult(userAnswerResult: String): UserAnswerResult
+}
+type Questionnaire {
+  _id: String
+  expiryDate: String
+  code: String
+  linkUri: String
+  name: String
+  finishFeedback: Boolean
+  questions: [String]
+  fullQuestions: [Question]
+  responses: [UserAnswerResult]
+}
+type Question {
+  _id: String
+  text: String
+  tags: [String]
+  answers: [Answer]
+}
+type Answer {
+  _id: String
+  text: String
+  correct: Boolean
+}
+type UserAnswerResult {
+  _id: String
+  time: String
+  answers: [UserAnswer]
+}
+type UserAnswer {
+  _id: String
+  answer: String
+  question: String
+}
+input AnswerInput {
+  text: String
+}
+input UserAnswerInput {
+  answer: String
+  question: String
+}
+
+type QuestionnaireOps {
+  expireDate(input: String): Questionnaire
+  code: String
+  name(input: String): Questionnaire
+  finishFeedback(show: Boolean): Questionnaire
+}
+
+type QuestionOps {
+  text(input: String): Question
+  Answer(answer: String): AnswerOps
+}
+
+type AnswerOps {
+  text(input: String): Answer
+  correct(correct: Boolean): Answer
+}
+
+type Mutation {
+  createQuestion(text: String): Question
+  createQuestionnaire(name: String): Questionnaire
+  addQuestion(question: String, questionnaire: String): Questionnaire
+  addAnswer(answer: AnswerInput, question: String): Question
+  addUserAnswerResult(questionnaire: String): UserAnswerResult
+  addUserAnswer(userAnswerResult: String, userAnswer: UserAnswerInput): UserAnswerResult
+  Question(_id: String): QuestionOps
+  Questionnaire(_id: String): QuestionnaireOps
+}

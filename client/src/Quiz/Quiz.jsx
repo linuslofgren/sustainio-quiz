@@ -13,12 +13,14 @@ const Quiz = ({code}) => {
           code
           expiryDate
           name
+          finishFeedback
           fullQuestions {
             _id
             text
             answers {
               _id
               text
+              correct
             }
           }
         }

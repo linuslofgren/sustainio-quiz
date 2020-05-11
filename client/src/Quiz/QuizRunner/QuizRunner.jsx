@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from 'urql'
 import Question from '../../components/question/Question'
 import '../../App.css';
+import ResultsProvider from './Finish/ResultsProvider'
+import Empty from './Finish/Empty'
 
 const Quiz = ({questionnaire}) => {
   let [qIdx, setQIdx] = useState(0)
@@ -25,20 +27,18 @@ const Quiz = ({questionnaire}) => {
     .then(res => setAnswerId(res.data.addUserAnswerResult._id))
   }, [questionnaire._id])
   let questions = questionnaire.fullQuestions || []
+
+  let q = questions[qIdx] || null
   return (
     <div className="App">
       <h1>{questionnaire.name}</h1>
-      {questions.map((q, i) => {
-        if(i === qIdx) {
-          return <Question key={q._id} index={i+1} total={questions.length} text={q.text} answers={q.answers} progress={(answer)=>{
+      {q ? <Question key={q._id} index={qIdx+1} total={questions.length} text={q.text} answers={q.answers} progress={(answer)=>{
               addAnswer({answerId: answerId, userAnswer: { answer: answer._id, question: q._id }})
               setQIdx(i => i+1)
             }}></Question>
-        } else {
-          return null
-        }
-      })}
-      {qIdx ? <span onClick={()=>{setQIdx(i => i - 1)}}>Back</span> : null}
+          : questionnaire.finishFeedback ? <ResultsProvider answerId={answerId} questionnaire={questionnaire}/> : <Empty/>
+      }
+      {qIdx && q ? <span onClick={()=>{setQIdx(i => i - 1)}}>Back</span> : null}
     </div>
   );
 }

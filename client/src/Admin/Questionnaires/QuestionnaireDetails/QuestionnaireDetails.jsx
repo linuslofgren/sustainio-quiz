@@ -16,6 +16,7 @@ const QuestionnaireDetails = ({}) => {
           code
           expiryDate
           questions
+          finishFeedback
           fullQuestions {
             _id
             text
@@ -53,6 +54,15 @@ const QuestionnaireDetails = ({}) => {
         }
       }
     `)
+    const [setFinishFeedbackResult, setFinishFeedback] = useMutation(`
+        mutation ($questionnaire: String, $show: Boolean) {
+          Questionnaire(_id: $questionnaire) {
+            finishFeedback(show: $show) {
+              _id
+            }
+          }
+        }
+      `)
   let [showAddQuestion, setShowQuestion] = useState(false)
   let [showChangeName, setShowChangeName] = useState(false)
   let questionnaire = {}
@@ -83,7 +93,9 @@ const QuestionnaireDetails = ({}) => {
             :
               <p>Never Expires</p>
           }
-
+          <span><input type="checkbox" checked={questionnaire.finishFeedback || false} onChange={(e)=>{
+              setFinishFeedback({questionnaire: questionnaireId, show: e.target.checked})
+          }}/> Show answers when completed</span>
           <Link to={`/admin/questionnaires/${questionnaireId}/responses`}><p>Responses: {(questionnaire.responses || []).length}</p></Link>
           <h2>Questions</h2>
           <ol>

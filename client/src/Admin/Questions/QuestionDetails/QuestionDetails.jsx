@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import Question from '../../../components/question/Question'
 import MainInput from '../../../components/input/MainInput'
 import EditableItem from '../../../components/input/EditableItem'
+import './QuestionDetails.css'
 
 const QuestionDetails = ({}) => {
   let {questionId} = useParams()
@@ -16,6 +17,7 @@ const QuestionDetails = ({}) => {
           answers {
             _id
             text
+            correct
           }
         }
       }
@@ -50,6 +52,17 @@ const QuestionDetails = ({}) => {
       }
     }
   `)
+  const [changeAnswerCorrectResult, changeAnswerCorrect] = useMutation(`
+    mutation ($question: String, $answer: String, $correct: Boolean) {
+    	Question(_id: $question) {
+        Answer(answer: $answer) {
+          correct(correct: $correct) {
+            _id
+          }
+        }
+      }
+    }
+  `)
   let [showChangeText, setShowChangeText] = useState(false)
   let question = {
     text: "---"
@@ -73,13 +86,17 @@ const QuestionDetails = ({}) => {
       <span onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
       <ol>
         {(question.answers || []).map(q => <li key={q._id}>
-          <input type="checkbox"/>
-          <EditableItem defaultValue={q.text} save={(newVal)=>{
-              changeAnswerText({question: questionId, answer: q._id, text: newVal})
-              .then(console.log)
-            }}>
-            <span>{q.text}</span>
-          </EditableItem>
+          <div className="admin-questioncards-answer-item">
+            <input type="checkbox" checked={(q.correct || false)} onChange={(e)=>{
+                changeAnswerCorrect({question: questionId, answer: q._id, correct: e.target.checked})
+              }}/>
+            <EditableItem defaultValue={q.text} save={(newVal)=>{
+                changeAnswerText({question: questionId, answer: q._id, text: newVal})
+                .then(console.log)
+              }}>
+              <span>{q.text}</span>
+            </EditableItem>
+          </div>
         </li>)}
       </ol>
       <h2>Preview</h2>

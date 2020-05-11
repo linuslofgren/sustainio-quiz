@@ -6,7 +6,7 @@ const EditableItem = ({defaultValue, save, children}) => {
   return edit ?
       <MainInput defaultValue={defaultValue} save={(newVal)=>{setEdit(false); save(newVal)}}/>
     :
-      <div style={{minWidth: 10, minHeight: 10}} onClick={()=>setEdit(true)}> {children} </div>
+      <div style={{minWidth: 10, minHeight: 10, display: 'inline-block'}} onClick={()=>setEdit(true)}> {children} </div>
 
 
 }

@@ -1,5 +1,5 @@
 .Component-MainInput-container {
-  display: flex;
+  display: inline-flex;
 }
 .Component-MainInput-input {
   font-size: 18px;

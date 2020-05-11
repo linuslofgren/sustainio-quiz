@@ -1,0 +1,24 @@
+.UserResults-answers-container {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+.UserResults-answers-item {
+  margin: 4px;
+  padding: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid transparent;
+}
+.UserResults-answers-item-right {
+  background-color: #66de86;
+  color: #084e0b;
+}
+.UserResults-answers-item-correct-indication {
+  border-color: #66de86;
+  background-color: #e2fbe2;
+}
+.UserResults-answers-item-wrong {
+  background-color: #fb7272;
+  color: #6f0b0b;
+}
