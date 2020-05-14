@@ -26,6 +26,19 @@ export const Text = () => <Results
         ]
       },
       {
+        text: "Q1",
+        answers: [
+          {
+            text: "a1",
+            _id: "11"
+          },
+          {
+            text: "a1",
+            _id: "12"
+          }
+        ]
+      },
+      {
         text: "Q2",
         answers: [
           {

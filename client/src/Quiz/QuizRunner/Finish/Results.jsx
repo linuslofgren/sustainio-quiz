@@ -15,7 +15,9 @@ const Results = ({questionnaire, answers}) => {
         {q.answers.map(a => {
           let correct = a.correct
           let picked = answers.includes(a._id)
+          let hasCorrect = q.answers.some(a => a.correct)
           return <div  key={a._id} className={`UserResults-answers-item ${
+              !hasCorrect ? '' :
               (correct && picked) ?
               " UserResults-answers-item-right "
               : correct
