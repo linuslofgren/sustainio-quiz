@@ -155,7 +155,7 @@ const start = async () => {
         let code = Math.floor(Math.random()*10000) + ""
 
         await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"code": code}})
-        return code
+        return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
       },
       name: async ({input})=> {
         await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"name": input}})

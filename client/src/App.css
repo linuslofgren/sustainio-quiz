@@ -20,15 +20,45 @@ a {
 }
 .App-input-code {
   padding: 10px;
+  box-sizing: border-box;
   font-size: 28px;
+  width: 100%;
+  border: 2px solid #2d2d2d;
+  text-align: center;
+  height: 54px;
+}
+.App-input-code-invalid {
+  border-color: #cc1919;
+}
+.App-input-incorrect-text {
+  margin: 0;
+  margin-top: 4px;
 }
 .App-start-button {
-  all: unset;
-  font-size: 18px;
-  margin-top: 10px;
-  background-color: black;
+  /* all: unset; */
+  -webkit-appearance: none;
+  font-size: 20px;
+  margin-top: 18px;
+  background-color: #2d2d2d;
   color: white;
   padding: 20px;
   padding-bottom: 4px;
   padding-top: 4px;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  color: white;
+  /* font-weight: bold; */
+  letter-spacing: 1.5px;
+  height: 50px;
+}
+.App-quiz-code-container {
+  width: 250px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.App-quiz-logo {
+  width: 80%;
+  margin-bottom: 64px;
 }

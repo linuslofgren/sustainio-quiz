@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { useQuery, useMutation } from 'urql'
 import Questionnaires from './Questionnaires'
 
 const QuestionnairesList = () => {
+  const context = useMemo(()=>({additionalTypenames: ['Questionnaire']}), [])
   const [res, executeQuery] = useQuery({
     query: `
       query {
@@ -18,7 +19,8 @@ const QuestionnairesList = () => {
           }
         }
       }
-    `
+    `,
+    context
   })
   const [addQuestionnaireResult, addQuestionnaire] = useMutation(`
       mutation ($name: String) {

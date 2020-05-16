@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation } from 'urql'
 import { useParams, Link, Switch, Route } from 'react-router-dom'
 import QuestionSelection from './QuestionSelection'
 import MainInput from '../../../components/input/MainInput'
+import Plus from '../../../components/icons/Plus'
 import Responses from './Responses/Responses'
 
 const QuestionnaireDetails = ({}) => {
+  const context = useMemo(()=>({additionalTypenames: ['Questionnaire']}), [])
   let {questionnaireId} = useParams()
   const [res, executeQuery] = useQuery({
     query: `
@@ -54,6 +56,15 @@ const QuestionnaireDetails = ({}) => {
         }
       }
     `)
+  const [changeCodeResult, changeCode] = useMutation(`
+      mutation ($questionnaire: String) {
+        Questionnaire(_id: $questionnaire) {
+          code {
+            _id
+          }
+        }
+      }
+    `)
     const [setFinishFeedbackResult, setFinishFeedback] = useMutation(`
         mutation ($questionnaire: String, $show: Boolean) {
           Questionnaire(_id: $questionnaire) {
@@ -86,7 +97,11 @@ const QuestionnaireDetails = ({}) => {
               <h1 className="admin-questioncards-title" onClick={()=>setShowChangeName(true)}>{questionnaire.name}</h1>
           }
           <p>ID: {questionnaireId}</p>
-          <p>Code: {questionnaire.code}</p>
+          <p>Code: {questionnaire.code} <button onClick={()=>changeCode({questionnaire: questionnaireId})
+            // .then(()=>{
+            //   executeQuery({ requestPolicy: 'cache-and-network' })
+            // })
+          }>Re-Generate</button></p>
           {
             questionnaire.expiryDate ?
               <p>Expires: {questionnaire.expiryDate}</p>

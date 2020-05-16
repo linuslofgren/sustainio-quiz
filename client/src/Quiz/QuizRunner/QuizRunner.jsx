@@ -23,8 +23,17 @@ const Quiz = ({questionnaire}) => {
       }
     `)
   useEffect(()=>{
-    createAnswer({questionnaire: questionnaire._id})
-    .then(res => setAnswerId(res.data.addUserAnswerResult._id))
+    let oldId = window.localStorage.getItem(questionnaire._id)
+    if (oldId == null) {
+      createAnswer({questionnaire: questionnaire._id})
+      .then(res => {
+        let id = res.data.addUserAnswerResult._id
+        window.localStorage.setItem(questionnaire._id, id)
+        setAnswerId(id)
+      })
+    } else {
+      setAnswerId(oldId)
+    }
   }, [questionnaire._id])
   let questions = questionnaire.fullQuestions || []
 
