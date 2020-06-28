@@ -10,6 +10,11 @@
   padding-right: 10px;
   border: 1px solid transparent;
 }
+.UserResults-results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 .UserResults-answers-item-right {
   background-color: #66de86;
   color: #084e0b;

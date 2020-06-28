@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import Question from '../../../components/question/Question'
 import MainInput from '../../../components/input/MainInput'
 import EditableItem from '../../../components/input/EditableItem'
+import Tags from './Tags/Tags'
 import './QuestionDetails.css'
 
 const QuestionDetails = ({}) => {
@@ -14,6 +15,7 @@ const QuestionDetails = ({}) => {
         question(_id: $id) {
           _id
           text
+          tags
           answers {
             _id
             text
@@ -82,6 +84,7 @@ const QuestionDetails = ({}) => {
       }
 
       <p>ID: {questionId}</p>
+      <Tags tags={question.tags}/>
       <h2>Answers</h2>
       <span onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
       <ol>

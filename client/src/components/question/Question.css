@@ -18,7 +18,7 @@
   font-weight: normal;
 }
 .question-next {
-  all: unset;
+  font-size: 16px;
   background-color: #ececec;
   color: #a5a5a5;
   margin: 10px;
@@ -28,6 +28,7 @@
   /* font-size: 22px; */
   border-radius: 6px;
   box-sizing: border-box;
+  border: none;
   cursor: pointer;
 }
 .question-next-active {

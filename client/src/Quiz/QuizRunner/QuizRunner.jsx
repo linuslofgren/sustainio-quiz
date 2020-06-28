@@ -40,11 +40,13 @@ const Quiz = ({questionnaire}) => {
   let q = questions[qIdx] || null
   return (
     <div className="App">
-      <h1>{questionnaire.name}</h1>
-      {q ? <Question key={q._id} index={qIdx+1} total={questions.length} text={q.text} answers={q.answers} progress={(answer)=>{
+
+      {q ? <React.Fragment>
+        <h1>{questionnaire.name}</h1>
+        <Question key={q._id} index={qIdx+1} total={questions.length} text={q.text} answers={q.answers} progress={(answer)=>{
               addAnswer({answerId: answerId, userAnswer: { answer: answer._id, question: q._id }})
               setQIdx(i => i+1)
-            }}></Question>
+            }}></Question></React.Fragment>
           : questionnaire.finishFeedback ? <ResultsProvider answerId={answerId} questionnaire={questionnaire}/> : <Empty/>
       }
       {qIdx && q ? <span onClick={()=>{setQIdx(i => i - 1)}}>Back</span> : null}

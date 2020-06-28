@@ -26,6 +26,8 @@ a {
   border: 2px solid #2d2d2d;
   text-align: center;
   height: 54px;
+  box-shadow: none;
+  border-radius: 0;
 }
 .App-input-code-invalid {
   border-color: #cc1919;

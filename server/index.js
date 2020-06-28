@@ -52,6 +52,7 @@ const start = async () => {
       ]).next()
     },
     questionnaireByCode: async ({ code }) => {
+      console.log(code)
       return await Questionnaires.aggregate([
         {
           $match: {code: code}

@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { createClient, Provider } from 'urql'
 
-const client = createClient({ url: 'http://localhost:4000/graphql' })
+const client = createClient({ url: window.location.protocol + "//" + window.location.hostname + ':4000/graphql' })
 
 ReactDOM.render(
   <React.StrictMode>
