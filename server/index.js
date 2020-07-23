@@ -19,7 +19,7 @@ const buildPath = process.env.BUILD_PATH || '../client/build'
 
 const start = async () => {
 
-  var url = "mongodb://172.17.0.1:27017"
+  var url = "mongodb://mongo-db:27017"
   var dbname = "test"
 
   const mongodb = await mongo.MongoClient.connect(url, { useUnifiedTopology: true })
