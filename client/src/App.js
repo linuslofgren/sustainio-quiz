@@ -17,11 +17,12 @@ function App() {
       <Route path="/">
         {start ?
            (
-             <div className="App">
+             <div className="App App-start">
                <div className="App-quiz-code-container">
 
                 <img className="App-quiz-logo" src={logo}></img>
-                <input value={code} onChange={e => setCode(e.target.value)} className={`App-input-code ${invalidCode ? 'App-input-code-invalid' : ''}`} placeholder="Quiz Code" />
+                <p className="App-input-code-desc">Quiz code</p>
+                <input value={code} onChange={e => setCode(e.target.value)} className={`App-input-code ${invalidCode ? 'App-input-code-invalid' : ''}`} placeholder="0000" />
                 {invalidCode ? <p className="App-input-incorrect-text">The code didn't match any quiz, check and try again</p> : null}
                 <button className="App-start-button" onClick={()=>setStart(false)}>Start</button>
 
