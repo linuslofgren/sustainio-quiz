@@ -1,1 +1,18 @@
-version: '3.8'
+version: '3'
+services:
+    backend:
+      build:
+        context: ./
+      networks:
+        - main
+      ports:
+        - "4000:4000"
+    database:
+        image: 'mongo'
+        container_name: 'mongo-db'
+        volumes:
+            - ./mongo-volume:/data/db
+        networks:
+          - main
+networks:
+  main:

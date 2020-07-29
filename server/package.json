@@ -17,10 +17,16 @@
   },
   "homepage": "https://github.com/linuslofgren/sustainio-quiz#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "connect-mongo": "^3.2.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
+    "express-session": "^1.17.1",
     "graphql": "^15.0.0",
-    "mongodb": "^3.5.7"
+    "mongodb": "^3.5.7",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
   }
 }
