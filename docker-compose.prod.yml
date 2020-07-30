@@ -6,6 +6,8 @@ services:
           - main
         ports:
           - "4000:4000"
+        environment:
+          - DEFAULT_PASS=$DEFAULT_PASS
     database:
         image: 'mongo'
         container_name: 'mongo-db'

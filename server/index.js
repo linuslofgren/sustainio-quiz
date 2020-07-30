@@ -40,7 +40,7 @@ const start = async () => {
   passport.deserializeUser((id, done) => {
     done(null, {username: "a", id: "abc"})
   })
-
+  console.log(process.env.DEFAULT_PASS)
   passport.use(new LocalStrategy((user, pass, done) => {
     console.log('AUTH')
     console.log(user, pass)
@@ -70,7 +70,7 @@ const start = async () => {
   app.use(passport.initialize())
   app.use(passport.session())
   app.use((req, res, next)=>{next()})
-  app.use('/graphql', protect, graphqlHTTP({
+  app.use('/graphql', graphqlHTTP({
     schema: schema,
     rootValue: root(mongodb.db(dbname)),
     graphiql: true

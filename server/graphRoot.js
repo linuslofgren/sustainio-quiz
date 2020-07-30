@@ -1,5 +1,12 @@
 var mongo = require('mongodb')
 
+const protect = (req) => {
+  // console.log(req)
+  if(!req.isAuthenticated()) {
+    throw Error("Not authenticated")
+  }
+}
+
 var root = (db) => {
 
   const Questionnaires = db.collection('questionnaires')
@@ -12,12 +19,14 @@ var root = (db) => {
     question: async ({ _id }) => {
       return await Questions.findOne({_id: mongo.ObjectId(_id)})
     },
-    createQuestion: async ({text}) => {
+    createQuestion: async ({text}, req) => {
+      protect(req)
       var question = {text: text}
       await Questions.insertOne(question)
       return question
     },
-    questionnaires: async () => {
+    questionnaires: async (args, req) => {
+      protect(req);
       return await Questionnaires.aggregate([
         {
           $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
@@ -48,12 +57,14 @@ var root = (db) => {
     questionnaireByLinkUri: async ({ uri }) => {
       return await Questionnaires.findOne({linkUri: uri})
     },
-    createQuestionnaire: async ({name}) => {
+    createQuestionnaire: async ({name}, args) => {
+      protect(args);
       var questionnaire = {name: name, code: "1234", questions: [], responses: []}
       await Questionnaires.insertOne(questionnaire)
       return questionnaire
     },
-    addQuestion: async ({question, questionnaire}) => {
+    addQuestion: async ({question, questionnaire}, req) => {
+      protect(req);
       await Questionnaires.updateOne(
         {
           _id: mongo.ObjectId(questionnaire)
@@ -64,7 +75,8 @@ var root = (db) => {
       )
       return await Questionnaires.findOne(mongo.ObjectId(questionnaire))
     },
-    addAnswer: async ({answer, question}) => {
+    addAnswer: async ({answer, question}, req) => {
+      protect(req);
       await Questions.updateOne(
         {
           _id: mongo.ObjectId(question)
@@ -116,58 +128,64 @@ var root = (db) => {
       ))
       return res.responses[0]
     },
-    Question: async ({_id}) => ({
-      text: async ({input}) => {
-        await Questions.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"text": input}})
-        return await Questions.findOne({_id: mongo.ObjectId(_id)})
-      },
-      tags: async ({input}) => {
-        await Questions.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"tags": input}})
-        return await Questions.findOne({_id: mongo.ObjectId(_id)})
-      },
-      Answer: async ({answer}) => ({
+    Question: async ({_id}, req) => {
+      protect(req);
+      return {
         text: async ({input}) => {
-          Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.text": input}})
-          return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
+          await Questions.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"text": input}})
+          return await Questions.findOne({_id: mongo.ObjectId(_id)})
         },
-        correct: async ({correct}) => {
-          Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.correct": correct}})
-          return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
-        }
-      })
-    }),
-    Questionnaire: async ({_id}) => ({
-      expiryDate: ()=>{},
-      code: async ()=>{
-
-        let code = Math.floor(Math.random()*10000) + ""
-
-        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"code": code}})
-        return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
-      },
-      name: async ({input})=> {
-        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"name": input}})
-        return await Questionnaires.aggregate([
-          {
-            $match: {_id: mongo.ObjectId(_id)}
+        tags: async ({input}) => {
+          await Questions.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"tags": input}})
+          return await Questions.findOne({_id: mongo.ObjectId(_id)})
+        },
+        Answer: async ({answer}) => ({
+          text: async ({input}) => {
+            Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.text": input}})
+            return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
           },
-          {
-            $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+          correct: async ({correct}) => {
+            Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.correct": correct}})
+            return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
           }
-        ]).next()
-      },
-      finishFeedback: async ({show})=> {
-        await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"finishFeedback": show}})
-        return await Questionnaires.aggregate([
-          {
-            $match: {_id: mongo.ObjectId(_id)}
-          },
-          {
-            $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
-          }
-        ]).next()
+        })
       }
-    })
+    },
+    Questionnaire: async ({_id}, req) => {
+      protect(req);
+      return {
+        expiryDate: ()=>{},
+        code: async ()=>{
+
+          let code = Math.floor(Math.random()*10000) + ""
+
+          await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"code": code}})
+          return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
+        },
+        name: async ({input})=> {
+          await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"name": input}})
+          return await Questionnaires.aggregate([
+            {
+              $match: {_id: mongo.ObjectId(_id)}
+            },
+            {
+              $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+            }
+          ]).next()
+        },
+        finishFeedback: async ({show})=> {
+          await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"finishFeedback": show}})
+          return await Questionnaires.aggregate([
+            {
+              $match: {_id: mongo.ObjectId(_id)}
+            },
+            {
+              $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+            }
+          ]).next()
+        }
+      }
+    }
   }
 }
 
