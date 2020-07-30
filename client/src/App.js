@@ -9,7 +9,7 @@ function App() {
   let [code, setCode] = useState('')
   let [start, setStart] = useState(true)
   let [invalidCode, setInvalidCode] = useState(false)
-  return <Router basename={process.env.PUBLIC_URL}>
+  return <Router>
     <Switch>
       <Route path="/admin">
         <Admin />
