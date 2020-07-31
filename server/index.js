@@ -44,7 +44,11 @@ const start = async () => {
   passport.use(new LocalStrategy((user, pass, done) => {
     console.log('AUTH')
     console.log(user, pass)
-    if(user === "admin" && pass === process.env.DEFAULT_PASS) {
+    let defaultPass = process.env.DEFAULT_PASS || ""
+    if(defaultPass === "") {
+      return done(null, false, {message: 'Bad auth'})
+    }
+    if(user === "admin" && pass === defaultPass) {
       return done(null, {username: 'a', id: "abc"})
     } else {
       return done(null, false, {message: 'Bad auth'})
