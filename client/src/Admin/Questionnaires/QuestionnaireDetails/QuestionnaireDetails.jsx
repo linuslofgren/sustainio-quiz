@@ -16,6 +16,7 @@ const QuestionnaireDetails = ({}) => {
           _id
           name
           code
+          linkUri
           expiryDate
           questions
           finishFeedback
@@ -51,6 +52,15 @@ const QuestionnaireDetails = ({}) => {
       mutation ($questionnaire: String, $name: String) {
         Questionnaire(_id: $questionnaire) {
           name(input: $name) {
+            _id
+          }
+        }
+      }
+    `)
+  const [changeLinkUriResult, changeLinkUri] = useMutation(`
+      mutation ($questionnaire: String, $uri: String) {
+        Questionnaire(_id: $questionnaire) {
+          linkUri(input: $uri) {
             _id
           }
         }
@@ -102,6 +112,14 @@ const QuestionnaireDetails = ({}) => {
             //   executeQuery({ requestPolicy: 'cache-and-network' })
             // })
           }>Re-Generate</button></p>
+        <p>Link: 
+            {questionnaire.linkUri === null ? 'No Link Configured' : <a href={window.location.origin + '/quiz/' + questionnaire.linkUri} target="_blank">{window.location.origin + '/quiz/' + questionnaire.linkUri} </a>}
+            <button onClick={
+                ()=>changeLinkUri({
+                  questionnaire: questionnaireId,
+                  uri: questionnaire.linkUri !== null ? '' : questionnaireId
+                })
+          }>{questionnaire.linkUri === null ? 'Generate Link' : 'Remove Link'}</button></p>
           {
             questionnaire.expiryDate ?
               <p>Expires: {questionnaire.expiryDate}</p>

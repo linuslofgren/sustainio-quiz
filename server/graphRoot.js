@@ -55,7 +55,14 @@ var root = (db) => {
       ]).next()
     },
     questionnaireByLinkUri: async ({ uri }) => {
-      return await Questionnaires.findOne({linkUri: uri})
+      return await Questionnaires.aggregate([
+        {
+          $match: {linkUri: uri}
+        },
+        {
+          $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
+        }
+      ]).next()
     },
     createQuestionnaire: async ({name}, args) => {
       protect(args);
@@ -154,6 +161,14 @@ var root = (db) => {
     Questionnaire: async ({_id}, req) => {
       protect(req);
       return {
+        linkUri: async ({input})=>{
+          if(input === "") {
+            await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$unset": {"linkUri": input}})
+          } else {
+            await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"linkUri": input}})
+          }
+          return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
+        },
         expiryDate: ()=>{},
         code: async ()=>{
 

@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import './App.css';
 import Admin from './Admin/Admin'
 import Quiz from './Quiz/Quiz'
+import QuizById from './Quiz/QuizById'
 import logo from './logo.png'
 
 function App() {
@@ -28,6 +29,9 @@ function App() {
               <input type="submit" value="Log In"/>
           </div>
       </form>
+      </Route>
+      <Route path="/quiz/:id">
+        <QuizById />
       </Route>
       <Route path="/">
         {start ?

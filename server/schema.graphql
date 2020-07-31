@@ -49,6 +49,7 @@ input UserAnswerInput {
 
 type QuestionnaireOps {
   expireDate(input: String): Questionnaire
+  linkUri(input: String): Questionnaire
   code: Questionnaire
   name(input: String): Questionnaire
   finishFeedback(show: Boolean): Questionnaire
