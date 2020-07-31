@@ -60,12 +60,20 @@ const start = async () => {
   app.use(bodyParser.urlencoded({extended: false}))
   app.use(bodyParser.json())
 
-  app.use(session({
+  let sessionConf = {
     secret: process.env.SESSION_SECRET || 'sustainio-secret-one',
     store: new MongoStore({client: mongodb, dbName: dbname}),
     resave: false,
-    saveUninitialized: false
-  }))
+    saveUninitialized: false,
+    cookie: {}
+  }
+
+  if(app.get('env') === 'production') {
+    app.set('trust proxy', 1)
+    sessionConf.cookie.secure = true
+  }
+
+  app.use(session(sessionConf))
 
   const protect = (req, res, next)=>{
     console.log(req.user)
