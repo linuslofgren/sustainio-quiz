@@ -61,8 +61,10 @@ const start = async () => {
   app.use(bodyParser.json())
 
   app.use(session({
-    secret: 'sustainio-secret-one',
-    store: new MongoStore({client: mongodb, dbName: dbname})
+    secret: process.env.SESSION_SECRET || 'sustainio-secret-one',
+    store: new MongoStore({client: mongodb, dbName: dbname}),
+    resave: false,
+    saveUninitialized: false
   }))
 
   const protect = (req, res, next)=>{
