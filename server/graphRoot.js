@@ -112,7 +112,7 @@ var root = (db) => {
           "responses._id": mongo.ObjectId(userAnswerResult)
         },
         {
-          projection: {"responses.$.answers": true}
+          projection: {"responses.$": true}
         }
       ))
       return res.responses[0]
@@ -123,7 +123,7 @@ var root = (db) => {
           "responses._id": mongo.ObjectId(userAnswerResult)
         },
         {
-          projection: {"responses.$.answers": true}
+          projection: {"responses.$": true}
         }
       ))
       return res.responses[0]
