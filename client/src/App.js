@@ -35,7 +35,7 @@ function App() {
              <div className="App App-start">
                <div className="App-quiz-code-container">
 
-                <img className="App-quiz-logo" src={logo}></img>
+                <a href="https://sustainio.se"><img className="App-quiz-logo" src={logo}></img></a>
                 <p className="App-input-code-desc">Quiz code</p>
                 <input value={code} onChange={e => setCode(e.target.value)} className={`App-input-code ${invalidCode ? 'App-input-code-invalid' : ''}`} placeholder="0000" />
                 {invalidCode ? <p className="App-input-incorrect-text">The code didn't match any quiz, check and try again</p> : null}
