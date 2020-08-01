@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { createClient, Provider } from 'urql'
 
-const API_URL = window.location.origin + '/graphql'
+const API_URL = process.env.REACT_APP_API_URL || window.location.origin + '/graphql'
 console.log(API_URL)
 const client = createClient({
   url: API_URL,

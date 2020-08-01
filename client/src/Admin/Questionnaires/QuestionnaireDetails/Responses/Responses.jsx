@@ -23,6 +23,18 @@ const Responses = ({questionnaire}) => {
         </ul>
       </li>)}
     </ol>
+    <table>
+      <thead>
+        <tr><th/>{questions.map(q => <th key={q._id} colSpan={q.answers.length}>{q.text}</th>)}</tr>
+        <tr><th/>{questions.flatMap(q => q.answers).map(a => <th key={a._id}>[{a.correct ? 'C' : 'W'}] {a.text}</th>)}</tr>
+      </thead>
+      <tbody>
+        {responses.map(response => <tr key={response._id}>
+          <td>{fmt(response.time)}</td>
+          {questions.flatMap(q => q.answers).map(a => <td key={a._id}>{response.answers.find(resp_a => resp_a.answer===a._id) ? 'X' : ''}</td>)}
+        </tr>)}
+      </tbody>
+    </table>
   </div>
 }
 

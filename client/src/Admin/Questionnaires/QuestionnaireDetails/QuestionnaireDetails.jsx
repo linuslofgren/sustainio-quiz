@@ -26,6 +26,7 @@ const QuestionnaireDetails = ({}) => {
             answers {
               _id
               text
+              correct
             }
           }
           responses {
@@ -112,7 +113,7 @@ const QuestionnaireDetails = ({}) => {
             //   executeQuery({ requestPolicy: 'cache-and-network' })
             // })
           }>Re-Generate</button></p>
-        <p>Link: 
+        <p>Link:
             {questionnaire.linkUri === null ? 'No Link Configured' : <a href={window.location.origin + '/quiz/' + questionnaire.linkUri} target="_blank">{window.location.origin + '/quiz/' + questionnaire.linkUri} </a>}
             <button onClick={
                 ()=>changeLinkUri({
