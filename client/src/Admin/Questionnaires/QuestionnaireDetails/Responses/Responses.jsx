@@ -1,11 +1,17 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 const Responses = ({questionnaire}) => {
-  console.log(questionnaire)
+  let [copied, setCopied] = useState(false)
+  // console.log(questionnaire)
   let responses = questionnaire.responses || []
   let questions = questionnaire.fullQuestions || []
   const fmt = (str) => new Date(str).toLocaleDateString() + ' ' + new Date(str).toLocaleTimeString()
   const answersFor = (answerId) => responses.flatMap(r => r.answers).filter(a => a.answer === answerId)
+
+  const copiedShow = () => {
+    setCopied(true)
+    setTimeout(()=>{setCopied(false)}, 4000)
+  }
   return <div className="admin-questions-items-container">
     <h1 className="admin-questioncards-title" >Responses</h1>
     <ul>
@@ -23,10 +29,28 @@ const Responses = ({questionnaire}) => {
         </ul>
       </li>)}
     </ol>
+    <button onClick={()=>{
+        let data = document.querySelector('table').outerHTML
+        if(navigator.clipboard) {
+          navigator.clipboard.writeText(data)
+            .then(copiedShow)
+        } else {
+          let textArea = document.createElement("textarea")
+          // textArea.style.display = "none"
+          textArea.value = data
+          document.body.appendChild(textArea)
+          textArea.focus()
+          textArea.select()
+          document.execCommand("copy")
+          document.body.removeChild(textArea)
+          copiedShow()
+        }
+      }}>Copy data</button>
+    {copied ? <span> Data copied! Use <code>ctrl + V</code> to paste into Excel</span> : null}
     <table>
       <thead>
         <tr><th/>{questions.map(q => <th key={q._id} colSpan={q.answers.length}>{q.text}</th>)}</tr>
-        <tr><th/>{questions.flatMap(q => q.answers).map(a => <th key={a._id}>[{a.correct ? 'C' : 'W'}] {a.text}</th>)}</tr>
+        <tr><th/>{questions.flatMap(q => q.answers).map(a => <th key={a._id}>[{a.correct ? 'Correct' : 'Wrong'}] {a.text}</th>)}</tr>
       </thead>
       <tbody>
         {responses.map(response => <tr key={response._id}>
