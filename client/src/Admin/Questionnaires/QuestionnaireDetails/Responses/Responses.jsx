@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import './Responses.css'
 
 const Responses = ({questionnaire}) => {
   let [copied, setCopied] = useState(false)
@@ -14,21 +15,6 @@ const Responses = ({questionnaire}) => {
   }
   return <div className="admin-questions-items-container">
     <h1 className="admin-questioncards-title" >Responses</h1>
-    <ul>
-      {responses.map(response => <li key={response._id}>
-        {fmt(response.time)} - {response.answers.length} qs
-      </li>)}
-    </ul>
-    <ol>
-      {questions.map(q => <li key={q._id}>
-        {q.text}
-        <ul>
-          {q.answers.map(a => <li key={a._id}>
-            {answersFor(a._id).length} - {a.text}
-          </li>)}
-        </ul>
-      </li>)}
-    </ol>
     <button onClick={()=>{
         let data = document.querySelector('table').outerHTML
         if(navigator.clipboard) {
@@ -59,6 +45,21 @@ const Responses = ({questionnaire}) => {
         </tr>)}
       </tbody>
     </table>
+    <ul>
+      {responses.map(response => <li key={response._id}>
+        {fmt(response.time)} - {response.answers.length} qs
+      </li>)}
+    </ul>
+    <ol>
+      {questions.map(q => <li key={q._id}>
+        {q.text}
+        <ul>
+          {q.answers.map(a => <li key={a._id}>
+            {answersFor(a._id).length} - {a.text}
+          </li>)}
+        </ul>
+      </li>)}
+    </ol>
   </div>
 }
 
