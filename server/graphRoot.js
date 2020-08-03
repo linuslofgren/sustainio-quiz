@@ -111,6 +111,12 @@ var root = (db) => {
       await Questionnaires.updateOne(
         { "responses._id": mongo.ObjectId(userAnswerResult) },
         {
+          $pull: { "responses.$.answers": {question: userAnswer.question} }
+        }
+      )
+      await Questionnaires.updateOne(
+        { "responses._id": mongo.ObjectId(userAnswerResult) },
+        {
           $push: { "responses.$.answers": {...userAnswer} }
         }
       )
