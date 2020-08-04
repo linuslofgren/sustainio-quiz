@@ -160,12 +160,24 @@ var root = (db) => {
           correct: async ({correct}) => {
             Questions.updateOne({"answers._id": mongo.ObjectId(answer)}, {"$set": {"answers.$.correct": correct}})
             return (await Questions.findOne({"answers._id": mongo.ObjectId(answer)}, {"answers.$._id": 1})).answers[0]
+          },
+          remove: async () => {
+            await Questions.updateOne(
+              {
+                _id: mongo.ObjectId(_id)
+              },
+              {
+                $pull: { answers: { _id: mongo.ObjectID(answer) } }
+              }
+            )
+            return await Questions.findOne(mongo.ObjectId(_id))
           }
         })
       }
     },
     Questionnaire: async ({_id}, req) => {
       protect(req);
+      const questionnaire = _id
       return {
         linkUri: async ({input})=>{
           if(input === "") {
@@ -204,6 +216,22 @@ var root = (db) => {
               $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
             }
           ]).next()
+        },
+        Question: (parent) => {
+          const question = parent._id
+          return {
+            remove: async () => {
+              await Questionnaires.updateOne(
+                {
+                  _id: mongo.ObjectId(questionnaire)
+                },
+                {
+                  $pull: { questions: mongo.ObjectId(question) }
+                }
+              )
+              return await Questionnaires.findOne(mongo.ObjectId(questionnaire))
+            }
+          }
         }
       }
     }

@@ -53,6 +53,12 @@ type QuestionnaireOps {
   code: Questionnaire
   name(input: String): Questionnaire
   finishFeedback(show: Boolean): Questionnaire
+  Question(_id: String): QuestionnaireQuestionOps
+}
+
+type QuestionnaireQuestionOps {
+  add: Questionnaire
+  remove: Questionnaire
 }
 
 type QuestionOps {
@@ -64,6 +70,7 @@ type QuestionOps {
 type AnswerOps {
   text(input: String): Answer
   correct(correct: Boolean): Answer
+  remove: Question
 }
 
 type Mutation {
@@ -71,7 +78,9 @@ type Mutation {
   createQuestionnaire(name: String): Questionnaire
   addQuestion(question: String, questionnaire: String): Questionnaire
   addAnswer(answer: AnswerInput, question: String): Question
+  removeAnswer(answer: AnswerInput, question: String): Question
   addUserAnswerResult(questionnaire: String): UserAnswerResult
+  removeUserAnswerResult(questionnaire: String): UserAnswerResult
   addUserAnswer(userAnswerResult: String, userAnswer: UserAnswerInput): UserAnswerResult
   Question(_id: String): QuestionOps
   Questionnaire(_id: String): QuestionnaireOps

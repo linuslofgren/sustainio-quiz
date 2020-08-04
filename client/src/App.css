@@ -81,3 +81,8 @@ a {
   left: 10px;
   /* margin-bottom: 64px; */
 }
+
+.small-button {
+  cursor: pointer;
+  border-bottom: 1px solid grey;
+}

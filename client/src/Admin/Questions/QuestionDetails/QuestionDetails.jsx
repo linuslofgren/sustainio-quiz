@@ -65,6 +65,17 @@ const QuestionDetails = ({}) => {
       }
     }
   `)
+  const [removeAnswerResult, removeAnswer] = useMutation(`
+    mutation ($question: String, $answer: String) {
+    	Question(_id: $question) {
+        Answer(answer: $answer) {
+          remove {
+            _id
+          }
+        }
+      }
+    }
+  `)
   let [showChangeText, setShowChangeText] = useState(false)
   let question = {
     text: "---"
@@ -86,7 +97,7 @@ const QuestionDetails = ({}) => {
       <p>ID: {questionId}</p>
       <Tags tags={question.tags}/>
       <h2>Answers</h2>
-      <span onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
+      <span className="small-button" onClick={()=>addAnswer({answer: {text: "New answer"}, question: questionId})}>Add answer</span>
       <ol>
         {(question.answers || []).map(q => <li key={q._id}>
           <div className="admin-questioncards-answer-item">
@@ -99,6 +110,7 @@ const QuestionDetails = ({}) => {
               }}>
               <span>{q.text}</span>
             </EditableItem>
+            <button onClick={()=>removeAnswer({question: questionId, answer: q._id})}>Remove</button>
           </div>
         </li>)}
       </ol>

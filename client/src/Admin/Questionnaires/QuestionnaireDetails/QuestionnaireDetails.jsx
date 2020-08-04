@@ -85,6 +85,17 @@ const QuestionnaireDetails = ({}) => {
           }
         }
       `)
+    const [removeQuestionResult, removeQuestion] = useMutation(`
+        mutation ($questionnaire: String, $question: String) {
+          Questionnaire(_id: $questionnaire) {
+            Question(_id: $question) {
+              remove {
+                _id
+              }
+            }
+          }
+        }
+      `)
   let [showAddQuestion, setShowQuestion] = useState(false)
   let [showChangeName, setShowChangeName] = useState(false)
   let questionnaire = {}
@@ -142,9 +153,10 @@ const QuestionnaireDetails = ({}) => {
                   )}
                 </ul>
               </Link>
+              <button onClick={()=>removeQuestion({questionnaire: questionnaireId, question: q._id})}>Remove</button>
             </li>)}
           </ol>
-          {showAddQuestion ? null : <span onClick={()=>setShowQuestion(s => !s)}>Add Question</span>}
+          {showAddQuestion ? null : <span className="small-button" onClick={()=>setShowQuestion(s => !s)}>Add Question</span>}
           {showAddQuestion ? <QuestionSelection hide={()=>setShowQuestion(false)} addedQuestions={(questionnaire.questions || [])} addQuestion={(questionId)=>addQuestion({question: questionId, questionnaire:  questionnaireId})}/> : null}
       </div>
     </Route>
