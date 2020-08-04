@@ -7,6 +7,19 @@ const protect = (req) => {
   }
 }
 
+const validQuestionnaire = (questionnaire) => {
+  if(!questionnaire) {
+    return false
+  }
+  if(questionnaire.expiryDate) {
+    let now = new Date()
+    if(now > questionnaire.expiryDate) {
+      return false
+    }
+  }
+  return true
+}
+
 var root = (db) => {
 
   const Questionnaires = db.collection('questionnaires')
@@ -45,7 +58,7 @@ var root = (db) => {
     },
     questionnaireByCode: async ({ code }) => {
       console.log(code)
-      return await Questionnaires.aggregate([
+      const questionnaire = await Questionnaires.aggregate([
         {
           $match: {code: code}
         },
@@ -53,9 +66,13 @@ var root = (db) => {
           $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
         }
       ]).next()
+      if(!validQuestionnaire(questionnaire)){
+        return null
+      }
+      return questionnaire
     },
     questionnaireByLinkUri: async ({ uri }) => {
-      return await Questionnaires.aggregate([
+      const questionnaire = await Questionnaires.aggregate([
         {
           $match: {linkUri: uri}
         },
@@ -63,6 +80,10 @@ var root = (db) => {
           $lookup: { from: "questions", localField: "questions", foreignField: "_id", as: "fullQuestions" }
         }
       ]).next()
+      if(!validQuestionnaire(questionnaire)){
+        return null
+      }
+      return questionnaire
     },
     createQuestionnaire: async ({name}, args) => {
       protect(args);
@@ -187,7 +208,19 @@ var root = (db) => {
           }
           return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
         },
-        expiryDate: ()=>{},
+        expiryDate: async ({input})=>{
+          console.log(typeof input)
+          console.log(input)
+          let requestedDate = new Date(input)
+          if(!isNaN(requestedDate)) {
+            console.log("Updating date...")
+            await Questionnaires.updateOne({"_id": mongo.ObjectId(_id)}, {"$set": {"expiryDate": requestedDate}})
+          } else {
+            console.log(requestedDate)
+            console.log(!isNaN(requestedDate))
+          }
+          return await Questionnaires.findOne({"_id": mongo.ObjectId(_id)})
+        },
         code: async ()=>{
 
           let code = Math.floor(Math.random()*10000) + ""

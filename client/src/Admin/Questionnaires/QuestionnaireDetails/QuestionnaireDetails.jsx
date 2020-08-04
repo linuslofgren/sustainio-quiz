@@ -5,10 +5,12 @@ import QuestionSelection from './QuestionSelection'
 import MainInput from '../../../components/input/MainInput'
 import Plus from '../../../components/icons/Plus'
 import Responses from './Responses/Responses'
+import ExpiryDate from './Controls/ExpiryDate'
 
 const QuestionnaireDetails = ({}) => {
   const context = useMemo(()=>({additionalTypenames: ['Questionnaire']}), [])
   let {questionnaireId} = useParams()
+  let [expiration, setExpiration] = useState(false)
   const [res, executeQuery] = useQuery({
     query: `
       query ($id: String!) {
@@ -85,6 +87,15 @@ const QuestionnaireDetails = ({}) => {
           }
         }
       `)
+      const [setExpirationDateResult, setExpirationDate] = useMutation(`
+          mutation ($questionnaire: String, $date: String) {
+            Questionnaire(_id: $questionnaire) {
+              expiryDate(input: $date) {
+                _id
+              }
+            }
+          }
+        `)
     const [removeQuestionResult, removeQuestion] = useMutation(`
         mutation ($questionnaire: String, $question: String) {
           Questionnaire(_id: $questionnaire) {
@@ -102,6 +113,12 @@ const QuestionnaireDetails = ({}) => {
   if (res.data && res.data.questionnaire) {
     questionnaire = res.data.questionnaire
   }
+  const formatNumberString = (s) => {
+    let date = new Date(Number(s))
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
+  }
+
+  let expired = new Date(Number(questionnaire.expiryDate)) < new Date()
   // {/*<div><input/><button onClick={()=>changeName({questionnaire: questionnaireId, name: "New auto name"})}>Save</button></div>*/}
   return <Switch>
     <Route path="/admin/questionnaires/:questionnaireId/responses">
@@ -132,12 +149,16 @@ const QuestionnaireDetails = ({}) => {
                   uri: questionnaire.linkUri !== null ? '' : questionnaireId
                 })
           }>{questionnaire.linkUri === null ? 'Generate Link' : 'Remove Link'}</button></p>
+          {expired ? <p>This questionnaire has expired and users won't be able to access it</p> : null}
           {
             questionnaire.expiryDate ?
-              <p>Expires: {questionnaire.expiryDate}</p>
+              <p>Expire{expired? 'd' :'s'}: {formatNumberString(questionnaire.expiryDate)}</p>
             :
               <p>Never Expires</p>
           }
+          <p>
+            {expiration ? <ExpiryDate defaultDate={new Date(Number(questionnaire.expiryDate))} setExpirationDate={(opt)=>setExpirationDate({questionnaire: questionnaireId, ...opt})} cancel={()=>setExpiration(false)}/> : <button onClick={()=>setExpiration(true)}>Set expiration date</button>}
+          </p>
           <span><input type="checkbox" checked={questionnaire.finishFeedback || false} onChange={(e)=>{
               setFinishFeedback({questionnaire: questionnaireId, show: e.target.checked})
           }}/> Show answers when completed</span>
