@@ -16,6 +16,8 @@ const validQuestionnaire = (questionnaire) => {
     if(now > questionnaire.expiryDate) {
       return false
     }
+  } else {
+    return false
   }
   return true
 }

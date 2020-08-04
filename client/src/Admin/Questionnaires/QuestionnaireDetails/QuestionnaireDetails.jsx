@@ -154,7 +154,7 @@ const QuestionnaireDetails = ({}) => {
             questionnaire.expiryDate ?
               <p>Expire{expired? 'd' :'s'}: {formatNumberString(questionnaire.expiryDate)}</p>
             :
-              <p>Never Expires</p>
+              <p>No expiration date set</p>
           }
           <p>
             {expiration ? <ExpiryDate defaultDate={new Date(Number(questionnaire.expiryDate))} setExpirationDate={(opt)=>setExpirationDate({questionnaire: questionnaireId, ...opt})} cancel={()=>setExpiration(false)}/> : <button onClick={()=>setExpiration(true)}>Set expiration date</button>}
